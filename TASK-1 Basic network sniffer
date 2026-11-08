@@ -1,0 +1,169 @@
+from scapy.all import sniff, IP, IPv6, TCP, UDP, ICMP, Raw
+from datetime import datetime
+import sys
+
+# ==========================================
+# BASIC NETWORK SNIFFER
+# ==========================================
+
+packet_count = 0
+
+def analyze_packet(packet):
+
+    global packet_count
+    packet_count += 1
+
+    print("\n" + "=" * 65)
+    print(f"             PACKET NUMBER: {packet_count}")
+    print("=" * 65)
+
+    # Capture time
+    print("Time Captured :", datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
+
+    # Packet size
+    print("Packet Size   :", len(packet), "bytes")
+
+    # Check IPv4 packet
+    if IP in packet:
+
+        ip = packet[IP]
+
+        print("\n--- IP INFORMATION ---")
+        print("Source IP      :", ip.src)
+        print("Destination IP :", ip.dst)
+        print("IP Version     :", ip.version)
+        print("TTL            :", ip.ttl)
+
+    # Check IPv6 packet
+    elif IPv6 in packet:
+
+        ip = packet[IPv6]
+
+        print("\n--- IPv6 INFORMATION ---")
+        print("Source IP      :", ip.src)
+        print("Destination IP :", ip.dst)
+        print("IP Version     :", ip.version)
+        print("Hop Limit      :", ip.hlim)
+
+    else:
+        print("Non-IP Packet")
+        return
+
+    # TCP protocol
+    if TCP in packet:
+
+        tcp = packet[TCP]
+
+        print("\n--- TCP INFORMATION ---")
+        print("Protocol       : TCP")
+        print("Source Port    :", tcp.sport)
+        print("Destination Port:", tcp.dport)
+        print("Sequence Number:", tcp.seq)
+        print("Acknowledgment :", tcp.ack)
+        print("Flags          :", tcp.flags)
+
+    # UDP protocol
+    elif UDP in packet:
+
+        udp = packet[UDP]
+
+        print("\n--- UDP INFORMATION ---")
+        print("Protocol       : UDP")
+        print("Source Port    :", udp.sport)
+        print("Destination Port:", udp.dport)
+        print("UDP Length     :", udp.len)
+
+    # ICMP protocol
+    elif ICMP in packet:
+
+        icmp = packet[ICMP]
+
+        print("\n--- ICMP INFORMATION ---")
+        print("Protocol       : ICMP")
+        print("ICMP Type      :", icmp.type)
+        print("ICMP Code      :", icmp.code)
+
+    else:
+        print("\nProtocol       : Other IP Protocol")
+
+    # Payload information
+    if Raw in packet:
+
+        payload = bytes(packet[Raw].load)
+
+        print("\n--- PAYLOAD INFORMATION ---")
+        print("Payload Length :", len(payload), "bytes")
+        print("Payload (Hex)  :", payload[:32].hex())
+
+        # Display printable characters only
+        printable = ''.join(
+            chr(byte) if 32 <= byte <= 126 else '.'
+            for byte in payload[:64]
+        )
+
+        print("Payload Preview:", printable)
+
+    else:
+        print("\nPayload        : No raw payload available")
+
+    print("=" * 65)
+
+
+# ==========================================
+# START PACKET CAPTURE
+# ==========================================
+
+def start_sniffer():
+
+    print("\n" + "=" * 65)
+    print("              PYTHON NETWORK SNIFFER")
+    print("=" * 65)
+
+    print("Status: Starting packet capture...")
+    print("Capture Limit: 50 packets")
+    print("Press CTRL + C to stop capturing.")
+    print("=" * 65)
+
+    try:
+
+        sniff(
+            prn=analyze_packet,
+            count=50,
+            store=False
+        )
+
+    except KeyboardInterrupt:
+
+        print("\n\nPacket capturing stopped by user.")
+
+    except PermissionError:
+
+        print("\nPermission Error!")
+        print("Run this program as Administrator or root.")
+
+    except Exception as error:
+
+        print("\nAn error occurred:", error)
+
+    finally:
+
+        print("\n" + "=" * 65)
+        print("             CAPTURE SUMMARY")
+        print("=" * 65)
+        print("Total Packets Captured:", packet_count)
+        print("Network Sniffer Closed Successfully.")
+        print("=" * 65)
+
+
+# ==========================================
+# MAIN PROGRAM
+# ==========================================
+
+if __name__ == "__main__":
+
+    try:
+        start_sniffer()
+
+    except Exception as error:
+        print("Program Error:", error)
+        sys.exit(1)
