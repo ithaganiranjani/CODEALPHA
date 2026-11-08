@@ -1,0 +1,103 @@
+"""
+SECURE CODING REVIEW TOOL
+-------------------------
+Performs static code analysis to detect
+common security vulnerabilities.
+
+Author: Student Project
+"""
+
+import re
+
+# Vulnerability Patterns
+SECURITY_RULES = {
+    "Hardcoded Password": r'password\s*=\s*["\'].*["\']',
+    "SQL Injection": r'execute\s*\(.*\+.*\)',
+    "Command Injection": r'os\.system\s*\(',
+    "Dangerous eval()": r'eval\s*\(',
+    "Weak Random Generator": r'random\.random\s*\('
+}
+
+
+def analyze_code(file_path):
+    findings = []
+
+    try:
+        with open(file_path, "r", encoding="utf-8") as file:
+            lines = file.readlines()
+
+        for line_no, line in enumerate(lines, start=1):
+
+            for issue, pattern in SECURITY_RULES.items():
+
+                if re.search(pattern, line):
+
+                    findings.append({
+                        "line": line_no,
+                        "issue": issue,
+                        "code": line.strip()
+                    })
+
+    except FileNotFoundError:
+        print("File not found.")
+        return []
+
+    return findings
+
+
+def generate_report(findings):
+
+    print("\n" + "=" * 70)
+    print("SECURITY REVIEW REPORT")
+    print("=" * 70)
+
+    if not findings:
+        print("No security vulnerabilities detected.")
+        return
+
+    for item in findings:
+
+        print(f"\nLine Number : {item['line']}")
+        print(f"Issue       : {item['issue']}")
+        print(f"Code        : {item['code']}")
+
+        if item["issue"] == "Hardcoded Password":
+            print("Recommendation:")
+            print("Store secrets in environment variables.")
+
+        elif item["issue"] == "SQL Injection":
+            print("Recommendation:")
+            print("Use parameterized queries.")
+
+        elif item["issue"] == "Command Injection":
+            print("Recommendation:")
+            print("Validate user input before system calls.")
+
+        elif item["issue"] == "Dangerous eval()":
+            print("Recommendation:")
+            print("Avoid eval(). Use safer alternatives.")
+
+        elif item["issue"] == "Weak Random Generator":
+            print("Recommendation:")
+            print("Use secrets module for security purposes.")
+
+    print("\n" + "=" * 70)
+    print("Review Complete")
+    print("=" * 70)
+
+
+def main():
+
+    print("=" * 70)
+    print("SECURE CODING REVIEW TOOL")
+    print("=" * 70)
+
+    file_name = input("Enter Python file name to analyze: ")
+
+    vulnerabilities = analyze_code(file_name)
+
+    generate_report(vulnerabilities)
+
+
+if __name__ == "__main__":
+    main()
