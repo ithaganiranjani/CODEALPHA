@@ -1,0 +1,180 @@
+import tkinter as tk
+from tkinter import messagebox
+
+# -------------------------
+# Main Window
+# -------------------------
+root = tk.Tk()
+root.title("Phishing Awareness Training")
+root.geometry("800x600")
+root.configure(bg="#f0f8ff")
+
+score = 0
+
+# -------------------------
+# Introduction
+# -------------------------
+title = tk.Label(
+    root,
+    text="PHISHING AWARENESS TRAINING",
+    font=("Arial", 20, "bold"),
+    bg="#f0f8ff",
+    fg="darkblue"
+)
+title.pack(pady=10)
+
+content = """
+What is Phishing?
+
+Phishing is a cyber attack where attackers trick users into
+revealing sensitive information such as passwords,
+bank details, or personal data.
+
+Common Targets:
+• Email Accounts
+• Banking Credentials
+• Credit Card Information
+• Social Media Accounts
+"""
+
+intro = tk.Label(
+    root,
+    text=content,
+    justify="left",
+    font=("Arial", 12),
+    bg="#f0f8ff"
+)
+intro.pack(pady=10)
+
+# -------------------------
+# Recognition Tips
+# -------------------------
+tips = """
+How to Recognize a Phishing Email?
+
+✔ Suspicious sender address
+✔ Urgent requests for action
+✔ Spelling and grammar mistakes
+✔ Unexpected attachments
+✔ Fake links
+
+How to Spot Fake Websites?
+
+✔ Check URL carefully
+✔ Look for HTTPS
+✔ Verify domain spelling
+✔ Avoid unknown pop-ups
+✔ Never enter credentials on suspicious sites
+"""
+
+tips_label = tk.Label(
+    root,
+    text=tips,
+    justify="left",
+    font=("Arial", 11),
+    bg="#f0f8ff"
+)
+tips_label.pack(pady=10)
+
+# -------------------------
+# Social Engineering
+# -------------------------
+social = """
+Social Engineering Techniques
+
+1. Phishing Emails
+2. Spear Phishing
+3. Smishing (SMS Phishing)
+4. Vishing (Voice Call Scam)
+5. Impersonation
+6. Fake Tech Support
+
+Attackers manipulate human emotions such as:
+• Fear
+• Urgency
+• Trust
+• Curiosity
+"""
+
+social_label = tk.Label(
+    root,
+    text=social,
+    justify="left",
+    font=("Arial", 11),
+    bg="#f0f8ff"
+)
+social_label.pack(pady=10)
+
+# -------------------------
+# Quiz Section
+# -------------------------
+quiz_title = tk.Label(
+    root,
+    text="Interactive Quiz",
+    font=("Arial", 16, "bold"),
+    bg="#f0f8ff",
+    fg="green"
+)
+quiz_title.pack(pady=10)
+
+question = tk.Label(
+    root,
+    text="Q1: Which of the following is a sign of phishing?",
+    font=("Arial", 12, "bold"),
+    bg="#f0f8ff"
+)
+question.pack()
+
+def check_answer(answer):
+    global score
+
+    if answer == "correct":
+        score += 1
+        messagebox.showinfo("Correct", "Correct Answer!")
+    else:
+        messagebox.showerror("Wrong", "Incorrect Answer!")
+
+btn1 = tk.Button(
+    root,
+    text="Urgent message asking for password",
+    command=lambda: check_answer("correct"),
+    bg="lightgreen"
+)
+btn1.pack(pady=5)
+
+btn2 = tk.Button(
+    root,
+    text="Official website URL",
+    command=lambda: check_answer("wrong"),
+    bg="lightcoral"
+)
+btn2.pack(pady=5)
+
+btn3 = tk.Button(
+    root,
+    text="Secure verified login page",
+    command=lambda: check_answer("wrong"),
+    bg="lightcoral"
+)
+btn3.pack(pady=5)
+
+# -------------------------
+# Final Score
+# -------------------------
+def show_score():
+    messagebox.showinfo(
+        "Quiz Result",
+        f"Your Score: {score}/1\n\nStay Alert Against Phishing!"
+    )
+
+submit_btn = tk.Button(
+    root,
+    text="Finish Training",
+    command=show_score,
+    bg="blue",
+    fg="white",
+    font=("Arial", 12, "bold")
+)
+submit_btn.pack(pady=20)
+
+root.mainloop()
